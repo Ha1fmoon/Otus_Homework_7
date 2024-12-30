@@ -1,11 +1,12 @@
-﻿namespace Otus_Homework_7._2;
+﻿namespace Otus_Homework_7_3;
 
 public class PlanetCatalogue
 {
-    private int _requestCounter;
-    
-    private const string RequestLimitErrorMessage = "Too many requests";
+    public const string RequestLimitErrorMessage = "Too frequent requests";
     private const string RequestNoResultMessage = "No such planet was found";
+    public const string LimoniaRequestMessage = "This is forbidden planet";
+    
+    public delegate string? PlanetValidator(string name);
     
     private List<Planet> PlanetList { get; set; }
 
@@ -23,11 +24,13 @@ public class PlanetCatalogue
         PlanetList = new List<Planet> { venus, earth, mars };
     }
 
-    public (int? order, int? equatorLength, string? errorText) GetPlanetInfo(string planetName)
+    public (int? order, int? equatorLength, string? errorText) GetPlanetInfo(string planetName, PlanetValidator validator)
     {
-        _requestCounter++;
-
-        if (TooFrequentRequest()) return SetErrorResponse(RequestLimitErrorMessage);
+        var error = validator(planetName);
+        if (error != null)
+        {
+            return SetErrorResponse(error);
+        }
         
         var planet = GetPlanet(planetName);
 
@@ -39,11 +42,6 @@ public class PlanetCatalogue
     private (int?, int?, string?) SetErrorResponse(string errorMessage)
     {
         return (null, null, errorMessage);
-    }
-
-    private bool TooFrequentRequest()
-    {
-        return _requestCounter % 3 == 0;
     }
     
     private Planet? GetPlanet(string planetName)

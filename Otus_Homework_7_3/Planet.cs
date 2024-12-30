@@ -1,4 +1,4 @@
-﻿namespace Otus_Homework_7._2;
+﻿namespace Otus_Homework_7_3;
 
 public class Planet
 {
